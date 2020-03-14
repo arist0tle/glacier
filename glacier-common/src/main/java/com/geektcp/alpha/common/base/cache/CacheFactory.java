@@ -1,4 +1,4 @@
-package alpha.common.base.cache;
+package com.geektcp.alpha.common.base.cache;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
