@@ -1,7 +1,7 @@
 package com.geektcp.alpha.common.base.exception;
 
 
-import alpha.common.base.constant.Status;
+import com.geektcp.alpha.common.base.constant.Status;
 
 /**
  * @author tanghaiyang on 2018/5/16.

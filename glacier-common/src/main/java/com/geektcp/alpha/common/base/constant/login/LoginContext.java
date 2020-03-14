@@ -1,4 +1,4 @@
-package alpha.common.base.constant.login;
+package com.geektcp.alpha.common.base.constant.login;
 
 import java.util.HashMap;
 import java.util.Map;

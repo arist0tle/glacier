@@ -1,4 +1,4 @@
-package alpha.common.base.constant;
+package com.geektcp.alpha.common.base.constant;
 
 /**
  * @author tanghaiyang on 2017/11/13.
