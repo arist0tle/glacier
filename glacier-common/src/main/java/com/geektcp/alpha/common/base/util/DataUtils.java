@@ -1,6 +1,6 @@
 package com.geektcp.alpha.common.base.util;
 
-import alpha.common.base.constant.FieldType;
+import com.geektcp.alpha.common.base.constant.FieldType;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**

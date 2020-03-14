@@ -1,4 +1,4 @@
-package alpha.common.base.collection;
+package com.geektcp.alpha.common.base.collection;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

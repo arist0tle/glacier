@@ -1,4 +1,4 @@
-package alpha.common.base.context;
+package com.geektcp.alpha.common.base.context;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

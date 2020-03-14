@@ -1,4 +1,4 @@
-package alpha.common.base.collection;
+package com.geektcp.alpha.common.base.collection;
 
 /**
  * @author tanghaiyang on 2019/9/28.

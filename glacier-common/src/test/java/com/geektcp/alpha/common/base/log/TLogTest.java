@@ -1,7 +1,7 @@
 package com.geektcp.alpha.common.base.log;
 
-import alpha.common.base.constant.Constants;
-import alpha.common.base.constant.FieldType;
+import com.geektcp.alpha.common.base.constant.Constants;
+import com.geektcp.alpha.common.base.constant.FieldType;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.log4j.Log4j2;
 

@@ -1,4 +1,4 @@
-package alpha.common.base.context;
+package com.geektcp.alpha.common.base.context;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
