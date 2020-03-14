@@ -1,6 +1,6 @@
 package alpha.common.base.context;
 
-import alpha.common.base.util.MXBeanUtils;
+import com.geektcp.alpha.common.base.util.MXBeanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
