@@ -1,0 +1,20 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.geektcp.alpha.common.base.rpc;
+
+message GlacierData {
+  bytes data = 1;
+  int32 start_pos = 2;
+  int32 len = 3;
+  string msg = 4;
+  string file_name = 5;
+  int32 status = 6;
+}
+
+message GlacierResponse {
+  string msg = 1;
+}
+
+service GlacierService {
+  rpc send (GlacierData) returns (GlacierResponse);
+}
