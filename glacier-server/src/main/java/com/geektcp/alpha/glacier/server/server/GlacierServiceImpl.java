@@ -53,9 +53,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (Exception e) {
-            log.error(e.getMessage());
-            log.info("fileName: {} | status:{}", fileName, status);
-            e.printStackTrace();
+            log.info("fileName: {} | status:{}", fileName, status, e);
         }
 
     }
