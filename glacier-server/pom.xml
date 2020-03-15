@@ -11,5 +11,19 @@
 
     <artifactId>glacier-server</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.geektcp.alpha</groupId>
+            <artifactId>glacier-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+    </dependencies>
 </project>
