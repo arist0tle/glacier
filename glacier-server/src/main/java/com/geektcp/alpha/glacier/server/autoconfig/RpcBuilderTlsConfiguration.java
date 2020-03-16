@@ -1,7 +1,7 @@
 package com.geektcp.alpha.glacier.server.autoconfig;
 
-import com.geektcp.alpha.socket.grpc.annotation.RpcPort;
-import com.geektcp.alpha.socket.grpc.annotation.RpcService;
+import com.geektcp.alpha.glacier.server.annotation.RpcPort;
+import com.geektcp.alpha.glacier.server.annotation.RpcService;
 import io.grpc.ServerBuilder;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
