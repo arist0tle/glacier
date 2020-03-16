@@ -15,8 +15,8 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <modules>
-        <module>glacier-client</module>
         <module>glacier-common</module>
+        <module>glacier-client</module>
         <module>glacier-server</module>
     </modules>
 
