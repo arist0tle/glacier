@@ -23,7 +23,6 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
     private static final String SAVE_PATH = "data";
     private static FileChannel fileChannel;
-    private static FileOutputStream dstFos;
 
     @Override
     public void send(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
@@ -63,7 +62,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         if (status == 0 || Objects.isNull(fileChannel)) {
             try {
                 File dstFile = new File(SAVE_PATH + fileName);
-                dstFos = new FileOutputStream(dstFile,true);
+                FileOutputStream dstFos = new FileOutputStream(dstFile,true);
                 fileChannel = dstFos.getChannel();
             } catch (Exception e) {
                 log.error(e.getMessage());
