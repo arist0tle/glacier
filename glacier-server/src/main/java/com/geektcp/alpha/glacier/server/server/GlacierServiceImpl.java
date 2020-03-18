@@ -21,7 +21,7 @@ import java.util.Objects;
 @RpcService
 public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBase {
 
-    private static final String SAVE_PATH = "data";
+    private static final String SAVE_PATH = "data/server";
     private static FileChannel fileChannel;
 
     @Override

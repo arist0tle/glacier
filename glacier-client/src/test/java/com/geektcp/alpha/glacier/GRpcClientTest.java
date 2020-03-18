@@ -27,7 +27,7 @@ public class GRpcClientTest {
                 .forAddress("localhost", 10000)
                 .usePlaintext()
                 .build();
-        String srcFilePath = "F:\\down\\axureRP-8.1.zip";
+        String srcFilePath = "data/client/test.zip";
         File srcFile = new File(srcFilePath);
         FileInputStream srcFis = new FileInputStream(srcFile);
         FileChannel srcFileChannel = srcFis.getChannel();
