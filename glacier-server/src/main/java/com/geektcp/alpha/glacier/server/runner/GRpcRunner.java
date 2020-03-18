@@ -63,7 +63,6 @@ public class GRpcRunner implements CommandLineRunner, DisposableBean {
                 .map(name -> applicationContext.getBeanFactory().getBean(name, ServerInterceptor.class))
                 .collect(Collectors.toList());
 
-
         // Adding health service
         serverBuilder.addService(healthStatusManager.getHealthService());
 
