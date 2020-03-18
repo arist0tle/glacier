@@ -25,3 +25,26 @@
 
 ### 协议
 客户端和服务端通信协议采用grpc协议
+
+
+### 接口设计
+
+- 接口清单
+/api/progress    查询上传进度
+
+
+输入
+ ```
+ {
+     "fileName": "test.zip"
+ }
+ ```
+ 
+输出：
+```
+ {
+     "fileName": "test.zip",
+     "progress": 80, //上传百度比
+     "savePath": "/data/upload"
+ }
+```
