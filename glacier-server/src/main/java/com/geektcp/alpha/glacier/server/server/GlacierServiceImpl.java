@@ -21,7 +21,7 @@ import java.util.Objects;
 @RpcService
 public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBase {
 
-    private static final String SAVE_PATH = "data/server";
+    private static final String SAVE_PATH = "/data/server/";
     private static FileChannel fileChannel;
 
     @Override
@@ -59,9 +59,11 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
     //////////////////////
     private static FileChannel getFileChannel(String fileName, int status) throws Exception {
+        String resourcePath = System.getProperty("user.dir");
         if (status == 0 || Objects.isNull(fileChannel)) {
             try {
-                File dstFile = new File(SAVE_PATH + fileName);
+                String filePath = resourcePath + SAVE_PATH + fileName;
+                File dstFile = new File(filePath);
                 FileOutputStream dstFos = new FileOutputStream(dstFile,true);
                 fileChannel = dstFos.getChannel();
             } catch (Exception e) {
