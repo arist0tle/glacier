@@ -48,3 +48,10 @@
      "savePath": "/data/upload"
  }
 ```
+
+### 文件默认存储路径
+- 服务端接收文件存储位置
+glacier/data/client/
+
+- 服务端接收文件存储位置
+glacier/data/server/
