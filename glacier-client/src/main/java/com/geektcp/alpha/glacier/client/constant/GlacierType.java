@@ -1,9 +1,9 @@
-package com.geektcp.alpha.glacier.constant;
+package com.geektcp.alpha.glacier.client.constant;
 
 /**
  * @author haiyang on 3/14/20 12:54 PM.
  */
-public enum  GlacierType {
+public enum GlacierType {
 
     UNKNOWN(-1, "未知状态"),
     SUCCESS(1, "success"),
