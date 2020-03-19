@@ -30,7 +30,8 @@ public class GRpcClientTest {
                 .build();
         String srcFilePath = "/data/client/test.zip";
         String resourcePath = System.getProperty("user.dir");
-        File srcFile = new File(resourcePath + srcFilePath);
+        String filePath = resourcePath + "/.."+ srcFilePath;
+        File srcFile = new File(filePath);
         FileInputStream srcFis = new FileInputStream(srcFile);
         FileChannel srcFileChannel = srcFis.getChannel();
         GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
