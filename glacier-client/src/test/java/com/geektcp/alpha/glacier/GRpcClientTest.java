@@ -3,6 +3,7 @@ package com.geektcp.alpha.glacier;
 import com.geektcp.alpha.common.base.rpc.GlacierData;
 import com.geektcp.alpha.common.base.rpc.GlacierResponse;
 import com.geektcp.alpha.common.base.rpc.GlacierServiceGrpc;
+import com.geektcp.alpha.glacier.client.ClientApp;
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -27,8 +28,9 @@ public class GRpcClientTest {
                 .forAddress("localhost", 10000)
                 .usePlaintext()
                 .build();
-        String srcFilePath = "data/client/test.zip";
-        File srcFile = new File(srcFilePath);
+        String srcFilePath = "/data/client/test.zip";
+        String resourcePath = System.getProperty("user.dir");
+        File srcFile = new File(resourcePath + srcFilePath);
         FileInputStream srcFis = new FileInputStream(srcFile);
         FileChannel srcFileChannel = srcFis.getChannel();
         GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
