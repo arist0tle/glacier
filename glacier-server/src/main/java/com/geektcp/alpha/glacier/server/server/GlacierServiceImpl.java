@@ -26,30 +26,28 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
     @Override
     public void send(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
-        String fileName = request.getFileName();
-        int status = request.getStatus();
-
-        String message = "response";
-        GlacierResponse response = GlacierResponse.newBuilder().setMsg(message).build();
-        log.info("server responded {}", response);
-
+        String fileName = request.getName();
+        long status = request.getStatus();
+        long position = request.getPosition();
+        String message = "response from server!";
+        GlacierResponse.Builder builder = GlacierResponse.newBuilder().setMsg(message);
         try {
             FileChannel dstFileChannel = getFileChannel(fileName, status);
             if (Objects.isNull(dstFileChannel)) {
-                responseObserver.onNext(response);
+                responseObserver.onNext(builder.build());
                 responseObserver.onCompleted();
                 return;
             }
             ByteString data = request.getData();
-            if(Objects.isNull(data)){
-                responseObserver.onNext(response);
+            if (Objects.isNull(data)) {
+                responseObserver.onNext(builder.build());
                 responseObserver.onCompleted();
                 return;
             }
             ByteBuffer buffer = ByteBuffer.wrap(data.toByteArray());
-            dstFileChannel.write(buffer);
-
-            responseObserver.onNext(response);
+            dstFileChannel.write(buffer, position);
+            builder.setPosition(dstFileChannel.position());
+            responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
         } catch (Exception e) {
             log.info("fileName: {} | status:{}", fileName, status, e);
@@ -58,13 +56,12 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     }
 
     //////////////////////
-    private static FileChannel getFileChannel(String fileName, int status) throws Exception {
+    private static FileChannel getFileChannel(String fileName, long status) throws Exception {
         String resourcePath = System.getProperty("user.dir");
         if (status == 0 || Objects.isNull(fileChannel)) {
-            try {
-                String filePath = resourcePath + SAVE_PATH + fileName;
-                File dstFile = new File(filePath);
-                FileOutputStream dstFos = new FileOutputStream(dstFile,true);
+            String filePath = resourcePath + SAVE_PATH + fileName;
+            File dstFile = new File(filePath);
+            try (FileOutputStream dstFos = new FileOutputStream(dstFile, true)) {
                 fileChannel = dstFos.getChannel();
             } catch (Exception e) {
                 log.error(e.getMessage());
