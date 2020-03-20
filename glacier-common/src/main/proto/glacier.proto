@@ -3,18 +3,23 @@ option java_multiple_files = true;
 package com.geektcp.alpha.common.base.rpc;
 
 message GlacierData {
-  bytes data = 1;
-  int32 start_pos = 2;
-  int32 len = 3;
-  string msg = 4;
-  string file_name = 5;
-  int32 status = 6;
+    bytes data = 1;
+    int64 position = 2;
+    int64 len = 3;
+    string msg = 4;
+    string name = 5;
+    int64 status = 6;
 }
 
 message GlacierResponse {
-  string msg = 1;
+    string name = 1;
+    int64 position = 2;
+    string msg = 3;
 }
 
 service GlacierService {
-  rpc send (GlacierData) returns (GlacierResponse);
+    rpc send (GlacierData) returns (GlacierResponse);
+
+    rpc locate (GlacierData) returns (GlacierResponse);
+
 }
