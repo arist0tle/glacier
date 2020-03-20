@@ -35,14 +35,14 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         }
     };
 
-    public static LoadingCache<String, Long> CACHE = CacheBuilder.newBuilder()
-            .refreshAfterWrite(7, TimeUnit.SECONDS)
-            .expireAfterWrite(5, TimeUnit.SECONDS)
+    private static LoadingCache<String, Long> cacheRpc = CacheBuilder.newBuilder()
+            .refreshAfterWrite(7, TimeUnit.HOURS)
+            .expireAfterWrite(5, TimeUnit.HOURS)
             .removalListener(myRemovalListener)
             .build(new CacheLoader<String, Long>() {
                 @Override
                 public Long load(@Nullable String key) throws Exception {
-                    return 100L;
+                    return 0L;
                 }
             });
 
@@ -74,7 +74,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
             dstFileChannel.write(buffer, position);
             long writePosition = dstFileChannel.position();
             builder.setPosition(writePosition);
-            CACHE.put(KEY_POSITION, writePosition);
+            cacheRpc.put(KEY_POSITION, writePosition);
             responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
         } catch (Exception e) {
@@ -83,14 +83,19 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
     }
 
-
     @Override
     public void locate(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
-        CACHE.getIfPresent(KEY_POSITION);
+        Long position = cacheRpc.getIfPresent(KEY_POSITION);
+        GlacierResponse.Builder builder = GlacierResponse.newBuilder();
+        if(Objects.nonNull(position)) {
+            builder.setPosition(position);
+        }
+        responseObserver.onNext(builder.build());
+        responseObserver.onCompleted();
     }
 
     //////////////////////
-    private static FileChannel getFileChannel(String fileName, long status) throws Exception {
+    private static FileChannel getFileChannel(String fileName, long status) {
         String resourcePath = System.getProperty("user.dir");
         if (status == 0 || Objects.isNull(fileChannel)) {
             String filePath = resourcePath + SAVE_PATH + fileName;
@@ -102,7 +107,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
             }
         }
         if (status == 2 && Objects.nonNull(fileChannel)) {
-            fileChannel.close();
+
             return null;
         }
         return fileChannel;
