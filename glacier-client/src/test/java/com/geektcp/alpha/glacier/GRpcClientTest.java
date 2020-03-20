@@ -40,7 +40,7 @@ public class GRpcClientTest {
         int size = 0;
         ByteBuffer buffer = ByteBuffer.allocateDirect(len);
         GlacierData.Builder builder = GlacierData.newBuilder();
-        builder.setFileName("test.zip");
+        builder.setName("test.zip");
         builder.setStatus(0);
         while (true) {
             size = srcFileChannel.read(buffer);

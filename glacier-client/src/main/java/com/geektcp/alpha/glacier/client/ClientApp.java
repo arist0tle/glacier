@@ -34,12 +34,17 @@ public class ClientApp {
             GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
             int len = 200000;
             int size = 0;
-            ByteBuffer buffer = ByteBuffer.allocateDirect(len);
+            ByteBuffer buffer = ByteBuffer.allocate(len);
             GlacierData.Builder builder = GlacierData.newBuilder();
-            builder.setFileName("test.zip");
+            builder.setName("test.zip");
             builder.setStatus(0);
+
+            GlacierResponse locateResponse =  stub.locate(builder.build());
+            long startPosition = locateResponse.getPosition();
             while (true) {
-                size = srcFileChannel.read(buffer);
+                size = srcFileChannel.read(buffer,startPosition);
+                long readPosition = srcFileChannel.position();
+                log.info("readPosition: {}", readPosition);
                 if (size == -1) {
                     builder.setStatus(2);
                     GlacierResponse response = stub.send(builder.build());
@@ -48,9 +53,11 @@ public class ClientApp {
                 }
                 buffer.flip();
                 builder.setData(ByteString.copyFrom(buffer));
+                builder.setPosition(readPosition);
                 GlacierData fileData = builder.build();
                 GlacierResponse glacierResponse = stub.send(fileData);
                 log.info("client received {}", glacierResponse.getMsg());
+                startPosition = glacierResponse.getPosition();
                 buffer.clear();
                 builder.setStatus(1);
             }
