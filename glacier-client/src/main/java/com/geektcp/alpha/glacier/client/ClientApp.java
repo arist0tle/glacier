@@ -32,7 +32,7 @@ public class ClientApp {
         try (FileInputStream srcFis = new FileInputStream(srcFile)) {
             FileChannel srcFileChannel = srcFis.getChannel();
             GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
-            int len = 200000;
+            int len = 20000;
             int size = 0;
             ByteBuffer buffer = ByteBuffer.allocate(len);
             GlacierData.Builder builder = GlacierData.newBuilder();
@@ -44,7 +44,7 @@ public class ClientApp {
             while (true) {
                 size = srcFileChannel.read(buffer,startPosition);
                 long readPosition = srcFileChannel.position();
-                log.info("readPosition: {}", readPosition);
+                log.info("startPosition: {}", startPosition);
                 if (size == -1) {
                     builder.setStatus(2);
                     GlacierResponse response = stub.send(builder.build());

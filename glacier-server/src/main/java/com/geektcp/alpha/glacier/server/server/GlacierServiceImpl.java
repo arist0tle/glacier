@@ -54,7 +54,10 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     public void send(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
         String fileName = request.getName();
         long status = request.getStatus();
-        long position = request.getPosition();
+        Long position = cacheRpc.getIfPresent(KEY_POSITION);
+        if(Objects.isNull(position)){
+            position = 0L;
+        }
         String message = "response from server!";
         GlacierResponse.Builder builder = GlacierResponse.newBuilder().setMsg(message);
         try {
@@ -71,8 +74,9 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
                 return;
             }
             ByteBuffer buffer = ByteBuffer.wrap(data.toByteArray());
+            log.info("position: {}", position);
             dstFileChannel.write(buffer, position);
-            long writePosition = dstFileChannel.position();
+            long writePosition = position + buffer.position();
             builder.setPosition(writePosition);
             cacheRpc.put(KEY_POSITION, writePosition);
             responseObserver.onNext(builder.build());
@@ -95,19 +99,20 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     }
 
     //////////////////////
-    private static FileChannel getFileChannel(String fileName, long status) {
+    private static FileChannel getFileChannel(String fileName, long status) throws Exception {
         String resourcePath = System.getProperty("user.dir");
         if (status == 0 || Objects.isNull(fileChannel)) {
             String filePath = resourcePath + SAVE_PATH + fileName;
             File dstFile = new File(filePath);
-            try (FileOutputStream dstFos = new FileOutputStream(dstFile, true)) {
+            try {
+                FileOutputStream dstFos = new FileOutputStream(dstFile, true);
                 fileChannel = dstFos.getChannel();
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
         }
         if (status == 2 && Objects.nonNull(fileChannel)) {
-
+            fileChannel.close();
             return null;
         }
         return fileChannel;
