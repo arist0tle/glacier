@@ -23,7 +23,7 @@ public class ClientApp {
 
     public static void main(String[] args) {
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("localhost", 10000)
+                .forAddress("43.247.68.115", 10000)
                 .usePlaintext()
                 .build();
         String resourcePath = System.getProperty("user.dir");

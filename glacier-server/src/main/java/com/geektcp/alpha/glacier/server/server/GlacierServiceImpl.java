@@ -28,7 +28,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         @Override
         public void onRemoval(RemovalNotification<String, Long> notification) {
             String tips = String.format("key=%s,value=%s,reason=%s in myRemovalListener", notification.getKey(), notification.getValue(), notification.getCause());
-            log.info("tips: {} | onRemoval thread id: {}",tips, Thread.currentThread().getId());
+            log.info("tips: {} | onRemoval thread id: {}", tips, Thread.currentThread().getId());
             if (notification.getCause().equals(RemovalCause.EXPIRED) && notification.getValue() != null) {
                 log.info("Remove {} in cacheConnection", notification.getKey());
             }
@@ -49,19 +49,33 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     private static final String SAVE_PATH = "/data/server/";
     private static FileChannel fileChannel;
     private static final String KEY_POSITION = "position";
+    private static final String KEY_FINISHED = "finished";
 
     @Override
     public void send(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
         String fileName = request.getName();
+        Long isFinished = cacheRpc.getIfPresent(KEY_FINISHED);
+        if (Objects.nonNull(isFinished) && isFinished == 1L) {
+            log.info("文件已经上传完毕！");
+            return;
+        }
         long status = request.getStatus();
         Long position = cacheRpc.getIfPresent(KEY_POSITION);
-        if(Objects.isNull(position)){
+        if (Objects.isNull(position)) {
             position = 0L;
         }
         String message = "response from server!";
         GlacierResponse.Builder builder = GlacierResponse.newBuilder().setMsg(message);
+        String resourcePath = System.getProperty("user.dir");
+        String filePath = resourcePath + SAVE_PATH + fileName;
+        File file = new File(filePath);
+        if(!file.exists()){
+            log.info("文件不存在");
+            cacheRpc.invalidate(KEY_FINISHED);
+        }
+
         try {
-            FileChannel dstFileChannel = getFileChannel(fileName, status);
+            FileChannel dstFileChannel = getFileChannel(file, status);
             if (Objects.isNull(dstFileChannel)) {
                 responseObserver.onNext(builder.build());
                 responseObserver.onCompleted();
@@ -91,7 +105,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     public void locate(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
         Long position = cacheRpc.getIfPresent(KEY_POSITION);
         GlacierResponse.Builder builder = GlacierResponse.newBuilder();
-        if(Objects.nonNull(position)) {
+        if (Objects.nonNull(position)) {
             builder.setPosition(position);
         }
         responseObserver.onNext(builder.build());
@@ -99,21 +113,19 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     }
 
     //////////////////////
-    private static FileChannel getFileChannel(String fileName, long status) throws Exception {
-        String resourcePath = System.getProperty("user.dir");
-        if (status == 0 || Objects.isNull(fileChannel)) {
-            String filePath = resourcePath + SAVE_PATH + fileName;
-            File dstFile = new File(filePath);
-            try {
-                FileOutputStream dstFos = new FileOutputStream(dstFile, true);
+    private static FileChannel getFileChannel(File file, long status) throws Exception {
+        try {
+            if (status == 0 || Objects.isNull(fileChannel)) {
+                FileOutputStream dstFos = new FileOutputStream(file, true);
                 fileChannel = dstFos.getChannel();
-            } catch (Exception e) {
-                log.error(e.getMessage());
             }
-        }
-        if (status == 2 && Objects.nonNull(fileChannel)) {
-            fileChannel.close();
-            return null;
+            if (status == 2) {
+                fileChannel.close();
+                cacheRpc.put(KEY_FINISHED, 1L);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
         return fileChannel;
     }
