@@ -55,8 +55,14 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     public void send(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
         String fileName = request.getName();
         Long isFinished = cacheRpc.getIfPresent(KEY_FINISHED);
+        String message = "response from server!";
+        GlacierResponse.Builder builder = GlacierResponse.newBuilder();
         if (Objects.nonNull(isFinished) && isFinished == 1L) {
-            log.info("文件已经上传完毕！");
+            message = "文件已经上传完毕！";
+            log.info(message);
+            builder.setMsg(message);
+            responseObserver.onNext(builder.build());
+            responseObserver.onCompleted();
             return;
         }
         long status = request.getStatus();
@@ -64,12 +70,11 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         if (Objects.isNull(position)) {
             position = 0L;
         }
-        String message = "response from server!";
-        GlacierResponse.Builder builder = GlacierResponse.newBuilder().setMsg(message);
+        builder.setMsg(message);
         String resourcePath = System.getProperty("user.dir");
         String filePath = resourcePath + SAVE_PATH + fileName;
         File file = new File(filePath);
-        if(!file.exists()){
+        if (!file.exists()) {
             log.info("文件不存在");
             cacheRpc.invalidate(KEY_FINISHED);
         }
