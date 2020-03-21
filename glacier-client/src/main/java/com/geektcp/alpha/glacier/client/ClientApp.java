@@ -60,7 +60,7 @@ public class ClientApp {
                 startPosition = glacierResponse.getPosition();
                 buffer.clear();
                 builder.setStatus(1);
-                break;
+
             }
         } catch (Exception e) {
             log.error(e.getMessage());

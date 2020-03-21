@@ -63,6 +63,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         if (!file.exists()) {
             log.info("文件不存在");
             cacheRpc.invalidate(KEY_FINISHED);
+            cacheRpc.put(KEY_POSITION, 0L);
         }
 
         Long isFinished = cacheRpc.getIfPresent(KEY_FINISHED);
