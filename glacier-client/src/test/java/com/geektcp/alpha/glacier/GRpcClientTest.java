@@ -3,7 +3,6 @@ package com.geektcp.alpha.glacier;
 import com.geektcp.alpha.common.base.rpc.GlacierData;
 import com.geektcp.alpha.common.base.rpc.GlacierResponse;
 import com.geektcp.alpha.common.base.rpc.GlacierServiceGrpc;
-import com.geektcp.alpha.glacier.client.ClientApp;
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
