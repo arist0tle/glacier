@@ -75,4 +75,9 @@ public class RpcProperties {
 
     private int blockSize;
 
+    public String getFileDir(){
+        return fileDir.replaceAll("\\\\", "/");
+    }
+
+
 }
