@@ -1,0 +1,57 @@
+<assembly>
+    <id>release</id>
+    <formats>
+        <format>tar.gz</format>
+        <!--<format>dir</format>-->
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib/</outputDirectory>
+            <!--<useProjectArtifact>false</useProjectArtifact>-->
+            <!--<unpack>false</unpack>-->
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+
+        <fileSet>
+            <directory>${project.basedir}/../</directory>
+            <outputDirectory>/bin</outputDirectory>
+            <includes>
+                <include>README.md</include>
+                <include>*.sh</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/</directory>
+            <outputDirectory>/conf</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+
+    </fileSets>
+
+    <files>
+        <file>
+            <source>../glacier-client/target/glacier-client-${project.version}.jar</source>
+            <outputDirectory>lib/</outputDirectory>
+            <destName>glacier-client-${project.version}.jar</destName>
+        </file>
+        <file>
+            <source>../glacier-server/target/glacier-server-${project.version}.jar</source>
+            <outputDirectory>lib/</outputDirectory>
+            <destName>glacier-server-${project.version}.jar</destName>
+        </file>
+        <file>
+            <source>../glacier-common/target/glacier-common-${project.version}.jar</source>
+            <outputDirectory>lib/</outputDirectory>
+            <destName>glacier-common-${project.version}.jar</destName>
+        </file>
+    </files>
+
+
+</assembly>
