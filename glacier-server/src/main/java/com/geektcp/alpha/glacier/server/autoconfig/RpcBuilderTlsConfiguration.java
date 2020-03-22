@@ -38,7 +38,7 @@ public class RpcBuilderTlsConfiguration {
     private RpcProperties serverProperties;
 
     @Bean
-    @ConditionalOnProperty(value = "grpc.server.model", havingValue = RpcProperties.SERVER_MODEL_TLS)
+    @ConditionalOnProperty(value = "rpc.server.model", havingValue = RpcProperties.SERVER_MODEL_TLS)
     public ServerBuilder getServerBuilder() throws SSLException {
         ServerBuilder serverBuilder;
 
