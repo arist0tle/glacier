@@ -2,7 +2,7 @@ package com.geektcp.alpha.glacier.server.autoconfig;
 
 import com.geektcp.alpha.glacier.server.annotation.RpcBuilderConfigurer;
 import com.geektcp.alpha.glacier.server.annotation.RpcService;
-import com.geektcp.alpha.glacier.server.runner.RpcRunner;
+import com.geektcp.alpha.glacier.server.runner.ServerRpcRunner;
 import io.grpc.ServerBuilder;
 import io.grpc.services.HealthStatusManager;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Configuration;
 public class RpcAutoConfiguration {
 
     @Bean
-    public RpcRunner gRpcServerRunner(ServerBuilder serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
-        return new RpcRunner(serverBuilder, serverBuilderConfigurer);
+    public ServerRpcRunner gRpcServerRunner(ServerBuilder serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
+        return new ServerRpcRunner(serverBuilder, serverBuilderConfigurer);
     }
 
     @Bean
