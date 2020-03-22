@@ -18,7 +18,7 @@
 
         <fileSet>
             <directory>${project.basedir}/../</directory>
-            <outputDirectory>/bin</outputDirectory>
+            <outputDirectory>/</outputDirectory>
             <includes>
                 <include>README.md</include>
             </includes>
