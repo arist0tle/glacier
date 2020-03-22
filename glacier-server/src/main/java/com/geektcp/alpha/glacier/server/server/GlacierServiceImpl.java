@@ -89,7 +89,9 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
                 return;
             }
             ByteBuffer buffer = ByteBuffer.wrap(data.toByteArray());
-            log.info("position: {}", position);
+            if(log.isDebugEnabled()){
+                log.debug("position: {} MB", position/1024/1024);
+            }
             dstFileChannel.write(buffer, position);
             long writePosition = position + buffer.position();
             builder.setPosition(writePosition);

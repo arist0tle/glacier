@@ -40,7 +40,7 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 .build();
         File clientPathFile = new File(fileDir);
         File[] clientFiles = clientPathFile.listFiles();
-        if(Objects.isNull(clientFiles)){
+        if (Objects.isNull(clientFiles)) {
             return;
         }
         long startPosition;
@@ -60,7 +60,7 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 while (true) {
                     size = srcFileChannel.read(buffer, startPosition);
                     long readPosition = srcFileChannel.position();
-                    log.info("startPosition: {}", startPosition);
+                    log.debug("position: {} MB", startPosition / 1024 / 1024);
                     if (size == -1) {
                         builder.setStatus(2);
                         GlacierResponse response = stub.send(builder.build());
@@ -72,7 +72,9 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                     builder.setPosition(readPosition);
                     GlacierData fileData = builder.build();
                     GlacierResponse glacierResponse = stub.send(fileData);
-                    log.info("client received {}", glacierResponse.getMsg());
+                    if (log.isDebugEnabled()) {
+                        log.info("client received {}", glacierResponse.getMsg());
+                    }
                     startPosition = glacierResponse.getPosition();
                     buffer.clear();
                     builder.setStatus(1);
