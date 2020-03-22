@@ -18,6 +18,7 @@
         <module>glacier-common</module>
         <module>glacier-client</module>
         <module>glacier-server</module>
+        <module>glacier-dist</module>
     </modules>
 
     <properties>
