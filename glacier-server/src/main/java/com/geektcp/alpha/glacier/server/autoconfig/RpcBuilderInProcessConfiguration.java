@@ -25,7 +25,7 @@ public class RpcBuilderInProcessConfiguration {
     private RpcProperties serverProperties;
 
     @Bean
-    @ConditionalOnProperty(value = "grpc.server.model", havingValue = RpcProperties.SERVER_MODEL_IN_PROCESS)
+    @ConditionalOnProperty(value = "rpc.server.model", havingValue = RpcProperties.SERVER_MODEL_IN_PROCESS)
     public ServerBuilder getServerBuilder() {
         ServerBuilder serverBuilder;
 
