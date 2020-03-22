@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd `dirname $0`
-java -jar glacier-server/target/glacier-server-1.0.jar
+nohup java -jar glacier-server/target/glacier-server-1.0.jar 2>&1 &
