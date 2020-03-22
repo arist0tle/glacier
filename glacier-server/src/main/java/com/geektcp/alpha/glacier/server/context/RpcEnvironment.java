@@ -20,7 +20,7 @@ public class RpcEnvironment implements EnvironmentPostProcessor {
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         MutablePropertySources sources = environment.getPropertySources();
         Properties properties = new Properties();
-        Integer configuredPort = environment.getProperty("grpc.server.port", Integer.class);
+        Integer configuredPort = environment.getProperty("rpc.server.port", Integer.class);
 
         if (null == configuredPort) {
             properties.put(RpcPort.propertyName, RpcProperties.DEFAULT_SERVER_PORT);
@@ -30,6 +30,6 @@ public class RpcEnvironment implements EnvironmentPostProcessor {
             properties.put(RpcPort.propertyName, configuredPort);
         }
 
-        sources.addLast(new PropertiesPropertySource("grpc", properties));
+        sources.addLast(new PropertiesPropertySource("rpc", properties));
     }
 }
