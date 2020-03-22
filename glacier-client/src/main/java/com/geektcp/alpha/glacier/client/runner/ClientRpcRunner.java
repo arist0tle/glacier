@@ -47,14 +47,14 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         }
         long startPosition;
         int size;
-        int len = 20000;
+        int len = rpcProperties.getBlockSize();
         ByteBuffer buffer = ByteBuffer.allocate(len);
         for (File clientFile : clientFiles) {
             try (FileInputStream clientFileStream = new FileInputStream(clientFile)) {
                 FileChannel srcFileChannel = clientFileStream.getChannel();
                 GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
                 GlacierData.Builder builder = GlacierData.newBuilder();
-                builder.setName("test.zip");
+                builder.setName(clientFile.getName());
                 builder.setStatus(0);
                 GlacierResponse locateResponse = stub.locate(builder.build());
                 startPosition = locateResponse.getPosition();
@@ -83,8 +83,6 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 log.error(e.getMessage());
             }
         }
-
-
         log.info("finished!");
         channel.shutdown();
     }
