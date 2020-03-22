@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * @author tanghaiyang on 2020/1/2 1:18.
  */
 @Slf4j
-public class RpcRunner implements CommandLineRunner, DisposableBean {
+public class ServerRpcRunner implements CommandLineRunner, DisposableBean {
 
     @Autowired
     private HealthStatusManager healthStatusManager;
@@ -49,7 +49,7 @@ public class RpcRunner implements CommandLineRunner, DisposableBean {
 
     private Server server;
 
-    public RpcRunner(ServerBuilder<?> serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
+    public ServerRpcRunner(ServerBuilder<?> serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
         this.serverBuilder = serverBuilder;
         this.serverBuilderConfigurer = serverBuilderConfigurer;
     }
@@ -132,7 +132,7 @@ public class RpcRunner implements CommandLineRunner, DisposableBean {
     private void startDaemonAwaitThread() {
         Thread awaitThread = new Thread(() -> {
             try {
-                RpcRunner.this.server.awaitTermination();
+                ServerRpcRunner.this.server.awaitTermination();
             } catch (InterruptedException e) {
                 log.error("gRPC server stopped.", e);
             }
