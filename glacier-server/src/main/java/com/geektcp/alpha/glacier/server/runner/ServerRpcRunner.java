@@ -56,12 +56,12 @@ public class ServerRpcRunner implements CommandLineRunner, DisposableBean {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Starting gRPC Server {}:{}",serverProperties.getHost(),serverProperties.getPort());
+        log.info("Starting gRPC Server {}:{}", serverProperties.getHost(), serverProperties.getPort());
 
         Collection<ServerInterceptor> globalInterceptors =
                 getBeanNamesByTypeWithAnnotation(RpcGlobalInterceptor.class, ServerInterceptor.class)
-                .map(name -> applicationContext.getBeanFactory().getBean(name, ServerInterceptor.class))
-                .collect(Collectors.toList());
+                        .map(name -> applicationContext.getBeanFactory().getBean(name, ServerInterceptor.class))
+                        .collect(Collectors.toList());
 
         // Adding health service
         serverBuilder.addService(healthStatusManager.getHealthService());
@@ -124,7 +124,13 @@ public class ServerRpcRunner implements CommandLineRunner, DisposableBean {
         return AnnotationAwareOrderComparator.INSTANCE.thenComparing((o1, o2) -> {
             boolean p1 = isOrderAnnotated.apply(o1);
             boolean p2 = isOrderAnnotated.apply(o2);
-            return p1 && !p2 ? -1 : p2 && !p1 ? 1 : 0;
+            if (p1 && !p2) {
+                return -1;
+            }
+            if (p2 && !p1) {
+                return 1;
+            }
+            return 0;
         }).reversed();
     }
 
@@ -135,6 +141,7 @@ public class ServerRpcRunner implements CommandLineRunner, DisposableBean {
                 ServerRpcRunner.this.server.awaitTermination();
             } catch (InterruptedException e) {
                 log.error("gRPC server stopped.", e);
+                Thread.currentThread().interrupt();
             }
         });
         awaitThread.setDaemon(false);
@@ -149,7 +156,7 @@ public class ServerRpcRunner implements CommandLineRunner, DisposableBean {
         log.info("gRPC server stopped.");
     }
 
-    private <T> Stream<String> getBeanNamesByTypeWithAnnotation(Class<? extends Annotation> annotationType, Class<T> beanType) throws Exception {
+    private <T> Stream<String> getBeanNamesByTypeWithAnnotation(Class<? extends Annotation> annotationType, Class<T> beanType) {
 
         return Stream.of(applicationContext.getBeanNamesForType(beanType))
                 .filter(name -> {
@@ -160,7 +167,6 @@ public class ServerRpcRunner implements CommandLineRunner, DisposableBean {
                         return true;
                     } else if (beanDefinition.getSource() instanceof AnnotatedTypeMetadata) {
                         return AnnotatedTypeMetadata.class.cast(beanDefinition.getSource()).isAnnotated(annotationType.getName());
-
                     }
 
                     return false;
