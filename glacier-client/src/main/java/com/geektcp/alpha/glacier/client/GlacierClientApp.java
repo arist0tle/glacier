@@ -10,9 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 /**
  * @author tanghaiyang on 2020/1/2 1:18.
  */
-@EnableConfigurationProperties({
-        RpcProperties.class
-})
+@EnableConfigurationProperties({RpcProperties.class})
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class GlacierClientApp {
 
