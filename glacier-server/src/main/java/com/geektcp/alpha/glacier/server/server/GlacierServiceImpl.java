@@ -65,9 +65,8 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         checkFileExist(absolutePath);
         Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
         if (isFinished == 1L) {
-            message = "文件已经上传完毕！";
-            log.info(message);
-            builder.setMsg(message);
+            log.info("file upload finished: {}", absolutePath);
+            builder.setMsg("文件已经上传完毕！");
             responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
             return;
@@ -89,8 +88,8 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
                 return;
             }
             ByteBuffer buffer = ByteBuffer.wrap(data.toByteArray());
-            if(log.isDebugEnabled()){
-                log.debug("position: {} MB", position/1024/1024);
+            if (log.isDebugEnabled()) {
+                log.debug("position: {} MB", position / 1024 / 1024);
             }
             dstFileChannel.write(buffer, position);
             long writePosition = position + buffer.position();
