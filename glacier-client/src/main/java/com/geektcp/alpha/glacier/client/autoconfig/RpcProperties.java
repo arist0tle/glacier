@@ -78,4 +78,6 @@ public class RpcProperties {
 
     private String fileDir;
 
+    private int blockSize;
+
 }
