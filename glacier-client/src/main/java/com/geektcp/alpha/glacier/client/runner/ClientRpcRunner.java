@@ -38,9 +38,7 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 .forAddress(host, port)
                 .usePlaintext()
                 .build();
-        String resourcePath = System.getProperty("user.dir");
-        String clientPath = resourcePath + fileDir;
-        File clientPathFile = new File(clientPath);
+        File clientPathFile = new File(fileDir);
         File[] clientFiles = clientPathFile.listFiles();
         if(Objects.isNull(clientFiles)){
             return;
