@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author tanghaiyang on 2020/1/2 1:18.
  */
 @Data
-@ConfigurationProperties(prefix = "rpc.server")
+@ConfigurationProperties(prefix = "rpc.client")
 public class RpcProperties {
 
     public static final int DEFAULT_SERVER_PORT = 50051;
@@ -39,15 +39,6 @@ public class RpcProperties {
      */
     private String model = SERVER_MODEL_SIMPLE;
 
-    /**
-     * gRPC server host
-     */
-    private String host;
-
-    /**
-     * gRPC server port
-     */
-    private int port = DEFAULT_SERVER_PORT;
 
     /**
      * In process server name.
@@ -75,6 +66,10 @@ public class RpcProperties {
      */
     private String trustCertCollectionFilePath;
 
+
+    private String serverHost;
+
+    private int serverPort = DEFAULT_SERVER_PORT;
 
     private String fileDir;
 

@@ -30,8 +30,8 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
     @Override
     public void run(String... args) {
         log.info("start client");
-        String host = rpcProperties.getHost();
-        int port = rpcProperties.getPort();
+        String host = rpcProperties.getServerHost();
+        int port = rpcProperties.getServerPort();
         String fileDir = rpcProperties.getFileDir();
         log.info("Starting gRPC Server {}:{}", host, port);
         ManagedChannel channel = ManagedChannelBuilder

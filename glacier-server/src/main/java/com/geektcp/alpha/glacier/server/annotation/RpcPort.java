@@ -12,5 +12,5 @@ import java.lang.annotation.*;
 @Documented
 @Value("${" + RpcPort.propertyName + "}")
 public @interface RpcPort {
-    String propertyName = "grpc.server.port";
+    String propertyName = "rpc.server.port";
 }
