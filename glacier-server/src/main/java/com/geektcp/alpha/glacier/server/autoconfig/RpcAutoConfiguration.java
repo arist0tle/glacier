@@ -1,13 +1,11 @@
 package com.geektcp.alpha.glacier.server.autoconfig;
 
 import com.geektcp.alpha.glacier.server.annotation.RpcBuilderConfigurer;
-import com.geektcp.alpha.glacier.server.annotation.RpcPort;
 import com.geektcp.alpha.glacier.server.annotation.RpcService;
-import com.geektcp.alpha.glacier.server.runner.GRpcRunner;
+import com.geektcp.alpha.glacier.server.runner.RpcRunner;
 import io.grpc.ServerBuilder;
 import io.grpc.services.HealthStatusManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,15 +21,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(RpcProperties.class)
 public class RpcAutoConfiguration {
 
-    @RpcPort
-    private int port;
-
-    @Autowired
-    private RpcProperties serverProperties;
-
     @Bean
-    public GRpcRunner gRpcServerRunner(ServerBuilder serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
-        return new GRpcRunner(serverBuilder, serverBuilderConfigurer);
+    public RpcRunner gRpcServerRunner(ServerBuilder serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
+        return new RpcRunner(serverBuilder, serverBuilderConfigurer);
     }
 
     @Bean

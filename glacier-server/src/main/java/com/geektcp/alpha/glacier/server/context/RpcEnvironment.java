@@ -14,7 +14,7 @@ import java.util.Properties;
 /**
  * @author tanghaiyang on 2020/1/2 1:18.
  */
-public class GRpcEnvironment implements EnvironmentPostProcessor {
+public class RpcEnvironment implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
