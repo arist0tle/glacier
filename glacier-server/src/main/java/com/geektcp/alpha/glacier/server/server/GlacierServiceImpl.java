@@ -64,7 +64,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
         String absolutePath = rpcProperties.getFileDir() + RpcProperties.SLASH + fileName;
         File file = new File(absolutePath);
-        checkFileExist(fileName);
+        checkFileExist(absolutePath);
         Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
         if (isFinished == 1L) {
             message = "文件已经上传完毕！";
@@ -107,7 +107,8 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     @Override
     public void locate(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
         String fileName = request.getName();
-        checkFileExist(fileName);
+        String absolutePath = rpcProperties.getFileDir() + RpcProperties.SLASH + fileName;
+        checkFileExist(absolutePath);
         Long position = cacheRpc.getIfPresent(RpcProperties.KEY_POSITION);
         GlacierResponse.Builder builder = GlacierResponse.newBuilder();
         if (Objects.nonNull(position)) {
@@ -137,10 +138,8 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     }
 
 
-    private void checkFileExist(String fileName) {
-        String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + rpcProperties.getFileDir() + fileName;
-        File file = new File(filePath);
+    private void checkFileExist(String absolutePath) {
+        File file = new File(absolutePath);
         if (!file.exists()) {
             log.info("文件不存在");
             cacheRpc.invalidate(RpcProperties.KEY_FINISHED);
