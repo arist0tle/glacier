@@ -22,7 +22,7 @@ import java.util.Objects;
  * @author tanghaiyang on 2020/1/2 1:18.
  */
 @Slf4j
-public class RpcRunner implements CommandLineRunner, DisposableBean {
+public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
 
     @Autowired
     private RpcProperties rpcProperties;
@@ -45,19 +45,19 @@ public class RpcRunner implements CommandLineRunner, DisposableBean {
         if(Objects.isNull(clientFiles)){
             return;
         }
+        long startPosition;
+        int size;
+        int len = 20000;
+        ByteBuffer buffer = ByteBuffer.allocate(len);
         for (File clientFile : clientFiles) {
-            try (FileInputStream srcFis = new FileInputStream(clientFile)) {
-                FileChannel srcFileChannel = srcFis.getChannel();
+            try (FileInputStream clientFileStream = new FileInputStream(clientFile)) {
+                FileChannel srcFileChannel = clientFileStream.getChannel();
                 GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
                 GlacierData.Builder builder = GlacierData.newBuilder();
                 builder.setName("test.zip");
                 builder.setStatus(0);
                 GlacierResponse locateResponse = stub.locate(builder.build());
-                long startPosition = locateResponse.getPosition();
-
-                int size;
-                int len = 20000;
-                ByteBuffer buffer = ByteBuffer.allocate(len);
+                startPosition = locateResponse.getPosition();
 
                 while (true) {
                     size = srcFileChannel.read(buffer, startPosition);
