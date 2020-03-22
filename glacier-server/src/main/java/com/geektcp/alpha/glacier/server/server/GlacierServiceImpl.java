@@ -4,10 +4,12 @@ import com.geektcp.alpha.common.base.rpc.GlacierData;
 import com.geektcp.alpha.common.base.rpc.GlacierResponse;
 import com.geektcp.alpha.common.base.rpc.GlacierServiceGrpc;
 import com.geektcp.alpha.glacier.server.annotation.RpcService;
+import com.geektcp.alpha.glacier.server.autoconfig.RpcProperties;
 import com.google.common.cache.*;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -46,10 +48,13 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
                 }
             });
 
-    private static final String SAVE_PATH = "/data/server/";
+    private RpcProperties rpcProperties;
     private static FileChannel fileChannel;
-    private static final String KEY_POSITION = "position";
-    private static final String KEY_FINISHED = "finished";
+
+    @Autowired
+    public GlacierServiceImpl(RpcProperties rpcProperties){
+        this.rpcProperties = rpcProperties;
+    }
 
     @Override
     public void send(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
@@ -58,10 +63,10 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         GlacierResponse.Builder builder = GlacierResponse.newBuilder();
 
         String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + SAVE_PATH + fileName;
+        String filePath = resourcePath + rpcProperties.getFileDir() + fileName;
         File file = new File(filePath);
         checkFileExist(fileName);
-        Long isFinished = cacheGet(KEY_FINISHED);
+        Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
         if (isFinished == 1L) {
             message = "文件已经上传完毕！";
             log.info(message);
@@ -71,7 +76,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
             return;
         }
         long status = request.getStatus();
-        Long position = cacheGet(KEY_POSITION);
+        Long position = cacheGet(RpcProperties.KEY_POSITION);
         builder.setMsg(message);
         try {
             FileChannel dstFileChannel = getFileChannel(file, status);
@@ -91,7 +96,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
             dstFileChannel.write(buffer, position);
             long writePosition = position + buffer.position();
             builder.setPosition(writePosition);
-            cacheRpc.put(KEY_POSITION, writePosition);
+            cacheRpc.put(RpcProperties.KEY_POSITION, writePosition);
             responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
         } catch (Exception e) {
@@ -104,15 +109,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     public void locate(GlacierData request, StreamObserver<GlacierResponse> responseObserver) {
         String fileName = request.getName();
         checkFileExist(fileName);
-        String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + SAVE_PATH + fileName;
-        File file = new File(filePath);
-        if (!file.exists()) {
-            log.info("文件不存在");
-            cacheRpc.invalidate(KEY_FINISHED);
-            cacheRpc.invalidate(KEY_POSITION);
-        }
-        Long position = cacheRpc.getIfPresent(KEY_POSITION);
+        Long position = cacheRpc.getIfPresent(RpcProperties.KEY_POSITION);
         GlacierResponse.Builder builder = GlacierResponse.newBuilder();
         if (Objects.nonNull(position)) {
             builder.setPosition(position);
@@ -122,15 +119,16 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     }
 
     //////////////////////
-    private static FileChannel getFileChannel(File file, long status) throws Exception {
+    private static FileChannel getFileChannel(File file, long status) {
         try {
+            FileOutputStream dstFos = new FileOutputStream(file, true);
             if (status == 0 || Objects.isNull(fileChannel)) {
-                FileOutputStream dstFos = new FileOutputStream(file, true);
                 fileChannel = dstFos.getChannel();
             }
             if (status == 2) {
                 fileChannel.close();
-                cacheRpc.put(KEY_FINISHED, 1L);
+                dstFos.close();
+                cacheRpc.put(RpcProperties.KEY_FINISHED, 1L);
                 return null;
             }
         } catch (Exception e) {
@@ -142,12 +140,12 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
     private void checkFileExist(String fileName) {
         String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + SAVE_PATH + fileName;
+        String filePath = resourcePath + rpcProperties.getFileDir() + fileName;
         File file = new File(filePath);
         if (!file.exists()) {
             log.info("文件不存在");
-            cacheRpc.invalidate(KEY_FINISHED);
-            cacheRpc.invalidate(KEY_POSITION);
+            cacheRpc.invalidate(RpcProperties.KEY_FINISHED);
+            cacheRpc.invalidate(RpcProperties.KEY_POSITION);
         }
     }
 
