@@ -80,4 +80,6 @@ public class RpcProperties {
 
     public static final String KEY_POSITION = "position";
     public static final String KEY_FINISHED = "finished";
+
+    public static final String SLASH = "/";
 }
