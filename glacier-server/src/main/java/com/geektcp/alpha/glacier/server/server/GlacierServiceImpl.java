@@ -29,17 +29,15 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     private static RemovalListener<String, Long> myRemovalListener = new RemovalListener<String, Long>() {
         @Override
         public void onRemoval(RemovalNotification<String, Long> notification) {
-            String tips = String.format("key=%s,value=%s,reason=%s in myRemovalListener", notification.getKey(), notification.getValue(), notification.getCause());
-            log.info("tips: {} | onRemoval thread id: {}", tips, Thread.currentThread().getId());
             if (notification.getCause().equals(RemovalCause.EXPIRED) && notification.getValue() != null) {
-                log.info("Remove {} in cacheConnection", notification.getKey());
+                log.info("Remove {} when EXPIRED", notification.getKey());
             }
         }
     };
 
     private static LoadingCache<String, Long> cacheRpc = CacheBuilder.newBuilder()
-            .refreshAfterWrite(7, TimeUnit.HOURS)
-            .expireAfterWrite(5, TimeUnit.HOURS)
+            .refreshAfterWrite(30, TimeUnit.DAYS)
+            .expireAfterWrite(30, TimeUnit.DAYS)
             .removalListener(myRemovalListener)
             .build(new CacheLoader<String, Long>() {
                 @Override
