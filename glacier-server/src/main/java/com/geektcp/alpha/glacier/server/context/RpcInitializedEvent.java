@@ -6,14 +6,14 @@ import org.springframework.context.ApplicationEvent;
 /**
  * @author tanghaiyang on 2020/1/2 1:18.
  */
-public class GRpcInitializedEvent extends ApplicationEvent {
+public class RpcInitializedEvent extends ApplicationEvent {
 
     /**
      * Create a new ApplicationEvent.
      *
      * @param source the object on which the event initially occurred (never {@code null})
      */
-    public GRpcInitializedEvent(Server source) {
+    public RpcInitializedEvent(Server source) {
         super(source);
     }
 

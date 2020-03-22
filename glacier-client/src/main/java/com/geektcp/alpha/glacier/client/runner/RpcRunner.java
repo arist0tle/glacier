@@ -1,12 +1,18 @@
-package com.geektcp.alpha.glacier.client;
+package com.geektcp.alpha.glacier.client.runner;
 
 import com.geektcp.alpha.common.base.rpc.GlacierData;
 import com.geektcp.alpha.common.base.rpc.GlacierResponse;
 import com.geektcp.alpha.common.base.rpc.GlacierServiceGrpc;
+import com.geektcp.alpha.glacier.client.autoconfig.RpcProperties;
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.services.HealthStatusManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,33 +20,40 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 /**
- * @author haiyang on 3/14/20 12:53 PM.
+ * @author tanghaiyang on 2020/1/2 1:18.
  */
 @Slf4j
-public class ClientApp {
+public class RpcRunner implements CommandLineRunner, DisposableBean {
 
-    private static final String SRC_FILE_PATH = "/data/client/test.zip";
+    @Autowired
+    private RpcProperties rpcProperties;
 
-    public static void main(String[] args) {
+    @Override
+    public void run(String... args) {
+        String host = rpcProperties.getHost();
+        int port = rpcProperties.getPort();
+        String fileDir = rpcProperties.getFileDir();
+        log.info("Starting gRPC Server {}:{}",host,port);
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("43.247.68.115", 10000)
+                .forAddress(host, port)
                 .usePlaintext()
                 .build();
         String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + SRC_FILE_PATH;
+        String filePath = resourcePath + fileDir;
         File srcFile = new File(filePath);
         try (FileInputStream srcFis = new FileInputStream(srcFile)) {
             FileChannel srcFileChannel = srcFis.getChannel();
             GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
-            int len = 20000;
-            int size = 0;
-            ByteBuffer buffer = ByteBuffer.allocate(len);
             GlacierData.Builder builder = GlacierData.newBuilder();
             builder.setName("test.zip");
             builder.setStatus(0);
-
             GlacierResponse locateResponse =  stub.locate(builder.build());
             long startPosition = locateResponse.getPosition();
+
+            int size;
+            int len = 20000;
+            ByteBuffer buffer = ByteBuffer.allocate(len);
+
             while (true) {
                 size = srcFileChannel.read(buffer,startPosition);
                 long readPosition = srcFileChannel.position();
@@ -60,7 +73,6 @@ public class ClientApp {
                 startPosition = glacierResponse.getPosition();
                 buffer.clear();
                 builder.setStatus(1);
-break;
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -68,4 +80,13 @@ break;
         log.info("finished!");
         channel.shutdown();
     }
+
+    @Override
+    public void destroy() throws Exception {
+        log.info("Shutting down gRPC server ...");
+        log.info("gRPC server stopped.");
+    }
+
+
+
 }

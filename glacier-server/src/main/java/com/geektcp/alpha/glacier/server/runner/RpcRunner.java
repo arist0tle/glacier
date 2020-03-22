@@ -4,7 +4,7 @@ import com.geektcp.alpha.glacier.server.annotation.RpcBuilderConfigurer;
 import com.geektcp.alpha.glacier.server.annotation.RpcGlobalInterceptor;
 import com.geektcp.alpha.glacier.server.annotation.RpcService;
 import com.geektcp.alpha.glacier.server.autoconfig.RpcProperties;
-import com.geektcp.alpha.glacier.server.context.GRpcInitializedEvent;
+import com.geektcp.alpha.glacier.server.context.RpcInitializedEvent;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.protobuf.services.ProtoReflectionService;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * @author tanghaiyang on 2020/1/2 1:18.
  */
 @Slf4j
-public class GRpcRunner implements CommandLineRunner, DisposableBean {
+public class RpcRunner implements CommandLineRunner, DisposableBean {
 
     @Autowired
     private HealthStatusManager healthStatusManager;
@@ -49,7 +49,7 @@ public class GRpcRunner implements CommandLineRunner, DisposableBean {
 
     private Server server;
 
-    public GRpcRunner(ServerBuilder<?> serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
+    public RpcRunner(ServerBuilder<?> serverBuilder, RpcBuilderConfigurer serverBuilderConfigurer) {
         this.serverBuilder = serverBuilder;
         this.serverBuilderConfigurer = serverBuilderConfigurer;
     }
@@ -88,7 +88,7 @@ public class GRpcRunner implements CommandLineRunner, DisposableBean {
 
         serverBuilderConfigurer.configure(serverBuilder);
         server = serverBuilder.build().start();
-        applicationContext.publishEvent(new GRpcInitializedEvent(server));
+        applicationContext.publishEvent(new RpcInitializedEvent(server));
 
         log.info("gRPC Server started");
         startDaemonAwaitThread();
@@ -132,7 +132,7 @@ public class GRpcRunner implements CommandLineRunner, DisposableBean {
     private void startDaemonAwaitThread() {
         Thread awaitThread = new Thread(() -> {
             try {
-                GRpcRunner.this.server.awaitTermination();
+                RpcRunner.this.server.awaitTermination();
             } catch (InterruptedException e) {
                 log.error("gRPC server stopped.", e);
             }
