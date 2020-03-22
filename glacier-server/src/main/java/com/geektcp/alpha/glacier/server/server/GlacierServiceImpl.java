@@ -52,7 +52,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     private static FileChannel fileChannel;
 
     @Autowired
-    public GlacierServiceImpl(RpcProperties rpcProperties){
+    public GlacierServiceImpl(RpcProperties rpcProperties) {
         this.rpcProperties = rpcProperties;
     }
 
@@ -62,9 +62,8 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         String message = "response from server!";
         GlacierResponse.Builder builder = GlacierResponse.newBuilder();
 
-        String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + rpcProperties.getFileDir() + fileName;
-        File file = new File(filePath);
+        String absolutePath = rpcProperties.getFileDir() + RpcProperties.SLASH + fileName;
+        File file = new File(absolutePath);
         checkFileExist(fileName);
         Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
         if (isFinished == 1L) {
