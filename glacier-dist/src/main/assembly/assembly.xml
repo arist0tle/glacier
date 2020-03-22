@@ -5,14 +5,7 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <dependencySets>
-        <dependencySet>
-            <outputDirectory>lib/</outputDirectory>
-        </dependencySet>
-    </dependencySets>
-
     <fileSets>
-
         <fileSet>
             <directory>${project.basedir}/../</directory>
             <outputDirectory>/</outputDirectory>
@@ -20,7 +13,6 @@
                 <include>README.md</include>
             </includes>
         </fileSet>
-
         <fileSet>
             <directory>${project.basedir}/src/main/resources/</directory>
             <outputDirectory>/conf</outputDirectory>
@@ -28,7 +20,6 @@
                 <include>*</include>
             </includes>
         </fileSet>
-
         <fileSet>
             <directory>${project.basedir}/src/main/scripts/</directory>
             <outputDirectory>/bin</outputDirectory>
@@ -55,6 +46,5 @@
             <destName>glacier-common-${project.version}.jar</destName>
         </file>
     </files>
-
 
 </assembly>
