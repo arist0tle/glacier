@@ -23,7 +23,7 @@ public class RpcBuilderSimpleConfiguration {
     private int port;
 
     @Bean
-    @ConditionalOnProperty(value = "grpc.server.model", havingValue = RpcProperties.SERVER_MODEL_SIMPLE)
+    @ConditionalOnProperty(value = "rpc.server.model", havingValue = RpcProperties.SERVER_MODEL_SIMPLE)
     public ServerBuilder getServerBuilder() {
         ServerBuilder serverBuilder;
 
