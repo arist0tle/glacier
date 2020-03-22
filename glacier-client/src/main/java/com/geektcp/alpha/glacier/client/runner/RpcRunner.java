@@ -7,12 +7,10 @@ import com.geektcp.alpha.glacier.client.autoconfig.RpcProperties;
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.services.HealthStatusManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +28,7 @@ public class RpcRunner implements CommandLineRunner, DisposableBean {
 
     @Override
     public void run(String... args) {
+        log.info("start client");
         String host = rpcProperties.getHost();
         int port = rpcProperties.getPort();
         String fileDir = rpcProperties.getFileDir();
