@@ -29,17 +29,15 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     private static RemovalListener<String, Long> myRemovalListener = new RemovalListener<String, Long>() {
         @Override
         public void onRemoval(RemovalNotification<String, Long> notification) {
-            String tips = String.format("key=%s,value=%s,reason=%s in myRemovalListener", notification.getKey(), notification.getValue(), notification.getCause());
-            log.info("tips: {} | onRemoval thread id: {}", tips, Thread.currentThread().getId());
             if (notification.getCause().equals(RemovalCause.EXPIRED) && notification.getValue() != null) {
-                log.info("Remove {} in cacheConnection", notification.getKey());
+                log.info("Remove {} when EXPIRED", notification.getKey());
             }
         }
     };
 
     private static LoadingCache<String, Long> cacheRpc = CacheBuilder.newBuilder()
-            .refreshAfterWrite(7, TimeUnit.HOURS)
-            .expireAfterWrite(5, TimeUnit.HOURS)
+            .refreshAfterWrite(30, TimeUnit.DAYS)
+            .expireAfterWrite(30, TimeUnit.DAYS)
             .removalListener(myRemovalListener)
             .build(new CacheLoader<String, Long>() {
                 @Override
@@ -67,9 +65,8 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         checkFileExist(absolutePath);
         Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
         if (isFinished == 1L) {
-            message = "文件已经上传完毕！";
-            log.info(message);
-            builder.setMsg(message);
+            log.info("file upload finished: {}", absolutePath);
+            builder.setMsg("文件已经上传完毕！");
             responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
             return;
@@ -91,7 +88,9 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
                 return;
             }
             ByteBuffer buffer = ByteBuffer.wrap(data.toByteArray());
-            log.info("position: {}", position);
+            if (log.isDebugEnabled()) {
+                log.debug("position: {} MB", position / 1024 / 1024);
+            }
             dstFileChannel.write(buffer, position);
             long writePosition = position + buffer.position();
             builder.setPosition(writePosition);
