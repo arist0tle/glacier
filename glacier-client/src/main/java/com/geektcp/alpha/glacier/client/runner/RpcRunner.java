@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Objects;
 
 /**
  * @author tanghaiyang on 2020/1/2 1:18.
@@ -32,50 +33,58 @@ public class RpcRunner implements CommandLineRunner, DisposableBean {
         String host = rpcProperties.getHost();
         int port = rpcProperties.getPort();
         String fileDir = rpcProperties.getFileDir();
-        log.info("Starting gRPC Server {}:{}",host,port);
+        log.info("Starting gRPC Server {}:{}", host, port);
         ManagedChannel channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
                 .build();
         String resourcePath = System.getProperty("user.dir");
-        String filePath = resourcePath + fileDir;
-        File srcFile = new File(filePath);
-        try (FileInputStream srcFis = new FileInputStream(srcFile)) {
-            FileChannel srcFileChannel = srcFis.getChannel();
-            GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
-            GlacierData.Builder builder = GlacierData.newBuilder();
-            builder.setName("test.zip");
-            builder.setStatus(0);
-            GlacierResponse locateResponse =  stub.locate(builder.build());
-            long startPosition = locateResponse.getPosition();
-
-            int size;
-            int len = 20000;
-            ByteBuffer buffer = ByteBuffer.allocate(len);
-
-            while (true) {
-                size = srcFileChannel.read(buffer,startPosition);
-                long readPosition = srcFileChannel.position();
-                log.info("startPosition: {}", startPosition);
-                if (size == -1) {
-                    builder.setStatus(2);
-                    GlacierResponse response = stub.send(builder.build());
-                    log.info("client send finished: {}", response.getMsg());
-                    break;
-                }
-                buffer.flip();
-                builder.setData(ByteString.copyFrom(buffer));
-                builder.setPosition(readPosition);
-                GlacierData fileData = builder.build();
-                GlacierResponse glacierResponse = stub.send(fileData);
-                log.info("client received {}", glacierResponse.getMsg());
-                startPosition = glacierResponse.getPosition();
-                buffer.clear();
-                builder.setStatus(1);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        String clientPath = resourcePath + fileDir;
+        File clientPathFile = new File(clientPath);
+        File[] clientFiles = clientPathFile.listFiles();
+        if(Objects.isNull(clientFiles)){
+            return;
         }
+        for (File clientFile : clientFiles) {
+            try (FileInputStream srcFis = new FileInputStream(clientFile)) {
+                FileChannel srcFileChannel = srcFis.getChannel();
+                GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
+                GlacierData.Builder builder = GlacierData.newBuilder();
+                builder.setName("test.zip");
+                builder.setStatus(0);
+                GlacierResponse locateResponse = stub.locate(builder.build());
+                long startPosition = locateResponse.getPosition();
+
+                int size;
+                int len = 20000;
+                ByteBuffer buffer = ByteBuffer.allocate(len);
+
+                while (true) {
+                    size = srcFileChannel.read(buffer, startPosition);
+                    long readPosition = srcFileChannel.position();
+                    log.info("startPosition: {}", startPosition);
+                    if (size == -1) {
+                        builder.setStatus(2);
+                        GlacierResponse response = stub.send(builder.build());
+                        log.info("client send finished: {}", response.getMsg());
+                        break;
+                    }
+                    buffer.flip();
+                    builder.setData(ByteString.copyFrom(buffer));
+                    builder.setPosition(readPosition);
+                    GlacierData fileData = builder.build();
+                    GlacierResponse glacierResponse = stub.send(fileData);
+                    log.info("client received {}", glacierResponse.getMsg());
+                    startPosition = glacierResponse.getPosition();
+                    buffer.clear();
+                    builder.setStatus(1);
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+
+
         log.info("finished!");
         channel.shutdown();
     }
@@ -85,7 +94,6 @@ public class RpcRunner implements CommandLineRunner, DisposableBean {
         log.info("Shutting down gRPC server ...");
         log.info("gRPC server stopped.");
     }
-
 
 
 }
