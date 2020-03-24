@@ -13,12 +13,12 @@
                 <include>README.md</include>
             </includes>
         </fileSet>
+
         <fileSet>
-            <directory>${project.basedir}/src/main/resources/server</directory>
-            <outputDirectory>/glacier-server-${project.version}/conf</outputDirectory>
+            <directory>${project.basedir}/src/main/resources/client</directory>
+            <outputDirectory>/glacier-client-${project.version}/bin</outputDirectory>
             <includes>
-                <include>*.properties</include>
-                <include>*.xml</include>
+                <include>*.sh</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -29,11 +29,20 @@
                 <include>*.xml</include>
             </includes>
         </fileSet>
+
         <fileSet>
-            <directory>${project.basedir}/src/main/scripts/</directory>
+            <directory>${project.basedir}/src/main/resources/server</directory>
             <outputDirectory>/glacier-server-${project.version}/bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/server</directory>
+            <outputDirectory>/glacier-server-${project.version}/conf</outputDirectory>
+            <includes>
+                <include>*.properties</include>
+                <include>*.xml</include>
             </includes>
         </fileSet>
     </fileSets>
