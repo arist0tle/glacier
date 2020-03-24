@@ -3,7 +3,7 @@
     <formats>
         <format>tar.gz</format>
     </formats>
-    <includeBaseDirectory>false</includeBaseDirectory>
+    <includeBaseDirectory>true</includeBaseDirectory>
 
     <fileSets>
         <fileSet>
@@ -14,15 +14,24 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/resources/</directory>
-            <outputDirectory>/conf</outputDirectory>
+            <directory>${project.basedir}/src/main/resources/server</directory>
+            <outputDirectory>/glacier-server-${project.version}/conf</outputDirectory>
             <includes>
-                <include>*</include>
+                <include>*.properties</include>
+                <include>*.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/client</directory>
+            <outputDirectory>/glacier-client-${project.version}/conf</outputDirectory>
+            <includes>
+                <include>*.properties</include>
+                <include>*.xml</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/scripts/</directory>
-            <outputDirectory>/bin</outputDirectory>
+            <outputDirectory>/glacier-server-${project.version}/bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
             </includes>
@@ -32,18 +41,24 @@
     <files>
         <file>
             <source>../glacier-client/target/glacier-client-${project.version}.jar</source>
-            <outputDirectory>lib/</outputDirectory>
+            <outputDirectory>/glacier-client-${project.version}/lib/</outputDirectory>
             <destName>glacier-client-${project.version}.jar</destName>
         </file>
         <file>
-            <source>../glacier-server/target/glacier-server-${project.version}.jar</source>
-            <outputDirectory>lib/</outputDirectory>
-            <destName>glacier-server-${project.version}.jar</destName>
+            <source>../glacier-common/target/glacier-common-${project.version}.jar</source>
+            <outputDirectory>/glacier-client-${project.version}/lib/</outputDirectory>
+            <destName>glacier-common-${project.version}.jar</destName>
         </file>
+
         <file>
             <source>../glacier-common/target/glacier-common-${project.version}.jar</source>
-            <outputDirectory>lib/</outputDirectory>
+            <outputDirectory>/glacier-server-${project.version}/lib/</outputDirectory>
             <destName>glacier-common-${project.version}.jar</destName>
+        </file>
+        <file>
+            <source>../glacier-server/target/glacier-server-${project.version}.jar</source>
+            <outputDirectory>/glacier-server-${project.version}/lib/</outputDirectory>
+            <destName>glacier-server-${project.version}.jar</destName>
         </file>
     </files>
 
