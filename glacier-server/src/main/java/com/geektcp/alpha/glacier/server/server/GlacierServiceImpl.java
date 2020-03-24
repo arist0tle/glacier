@@ -140,7 +140,7 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     private void checkFileExist(String absolutePath) {
         File file = new File(absolutePath);
         if (!file.exists()) {
-            log.info("文件不存在");
+            log.info("文件不存在: {}", absolutePath);
             cacheRpc.invalidate(RpcProperties.KEY_FINISHED);
             cacheRpc.invalidate(RpcProperties.KEY_POSITION);
         }

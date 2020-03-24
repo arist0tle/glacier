@@ -48,6 +48,10 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         int len = rpcProperties.getBlockSize();
         ByteBuffer buffer = ByteBuffer.allocate(len);
         for (File clientFile : clientFiles) {
+            if(!clientFile.exists()){
+                log.info("file is not exist: {}", clientFile.getAbsolutePath());
+                continue;
+            }
             try (FileInputStream clientFileStream = new FileInputStream(clientFile)) {
                 FileChannel srcFileChannel = clientFileStream.getChannel();
                 GlacierServiceGrpc.GlacierServiceBlockingStub stub = GlacierServiceGrpc.newBlockingStub(channel);
