@@ -32,15 +32,17 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         log.info("start client");
         String host = rpcProperties.getServerHost();
         int port = rpcProperties.getServerPort();
-        String fileDir = rpcProperties.getFileDir();
         log.info("Starting gRPC Server {}:{}", host, port);
         ManagedChannel channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
                 .build();
-        File clientPathFile = new File(fileDir);
-        if(!clientPathFile.exists()){
-            clientPathFile.mkdir();
+        File clientPathFile = new File(rpcProperties.getFileDir());
+        if (!clientPathFile.exists()) {
+            boolean createDir = clientPathFile.mkdir();
+            if (!createDir) {
+                log.error("create dir failed: {}", rpcProperties.getFileDir());
+            }
         }
         File[] clientFiles = clientPathFile.listFiles();
         if (Objects.isNull(clientFiles)) {
@@ -51,7 +53,7 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         int len = rpcProperties.getBlockSize();
         ByteBuffer buffer = ByteBuffer.allocate(len);
         for (File clientFile : clientFiles) {
-            if(!clientFile.exists()){
+            if (!clientFile.exists()) {
                 log.info("file is not exist: {}", clientFile.getAbsolutePath());
                 continue;
             }
