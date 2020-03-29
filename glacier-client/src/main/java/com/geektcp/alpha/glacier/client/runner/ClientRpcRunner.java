@@ -39,6 +39,9 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 .usePlaintext()
                 .build();
         File clientPathFile = new File(fileDir);
+        if(!clientPathFile.exists()){
+            clientPathFile.mkdir();
+        }
         File[] clientFiles = clientPathFile.listFiles();
         if (Objects.isNull(clientFiles)) {
             return;
