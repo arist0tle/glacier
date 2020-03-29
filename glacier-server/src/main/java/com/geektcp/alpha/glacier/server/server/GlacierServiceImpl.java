@@ -62,7 +62,6 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
 
         String absolutePath = rpcProperties.getFileDir() + RpcProperties.SLASH + fileName;
         File file = new File(absolutePath);
-        checkFileExist(absolutePath);
         Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
         if (isFinished == 1L) {
             log.info("file upload finished: {}", absolutePath);
@@ -120,13 +119,12 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
     //////////////////////
     private static FileChannel getFileChannel(File file, long status) {
         try {
-            FileOutputStream dstFos = new FileOutputStream(file, true);
             if (status == 0 || Objects.isNull(fileChannel)) {
+                FileOutputStream dstFos = new FileOutputStream(file, true);
                 fileChannel = dstFos.getChannel();
             }
             if (status == 2) {
                 fileChannel.close();
-                dstFos.close();
                 cacheRpc.put(RpcProperties.KEY_FINISHED, 1L);
                 return null;
             }
