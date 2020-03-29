@@ -59,7 +59,13 @@ public class GlacierServiceImpl extends GlacierServiceGrpc.GlacierServiceImplBas
         String fileName = request.getName();
         String message = "response from server!";
         GlacierResponse.Builder builder = GlacierResponse.newBuilder();
-
+        File serverPathFile = new File(rpcProperties.getFileDir());
+        if(!serverPathFile.exists()){
+            boolean createDir = serverPathFile.mkdir();
+            if(!createDir){
+                log.error("create dir failed: {}", rpcProperties.getFileDir());
+            }
+        }
         String absolutePath = rpcProperties.getFileDir() + RpcProperties.SLASH + fileName;
         File file = new File(absolutePath);
         Long isFinished = cacheGet(RpcProperties.KEY_FINISHED);
