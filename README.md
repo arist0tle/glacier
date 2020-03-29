@@ -58,7 +58,7 @@
 
 ### 文件默认存储路径
 - 服务端接收文件存储位置
-glacier/data/client/
+/tmp/glacier-store-client
 
 - 服务端接收文件存储位置
-glacier/data/server/
+/tmp/glacier-store-server
