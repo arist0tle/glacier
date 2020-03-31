@@ -44,13 +44,25 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 log.error("create dir failed: {}", rpcProperties.getFileDir());
             }
         }
+
+        doUploadJob(channel,clientPathFile);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        log.info("Shutting down gRPC server ...");
+        log.info("gRPC server stopped.");
+    }
+
+    ///////////////////////////////////
+    private void doUploadJob(ManagedChannel channel, File clientPathFile){
+        long startPosition;
+        int size;
+        int len = rpcProperties.getBlockSize();
         File[] clientFiles = clientPathFile.listFiles();
         if (Objects.isNull(clientFiles)) {
             return;
         }
-        long startPosition;
-        int size;
-        int len = rpcProperties.getBlockSize();
         ByteBuffer buffer = ByteBuffer.allocate(len);
         for (File clientFile : clientFiles) {
             if (!clientFile.exists()) {
@@ -95,12 +107,4 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         log.info("finished!");
         channel.shutdown();
     }
-
-    @Override
-    public void destroy() throws Exception {
-        log.info("Shutting down gRPC server ...");
-        log.info("gRPC server stopped.");
-    }
-
-
 }
