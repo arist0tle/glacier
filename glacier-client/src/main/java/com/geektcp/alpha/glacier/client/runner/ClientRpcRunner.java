@@ -45,7 +45,9 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
             }
         }
 
-        doUploadJob(channel,clientPathFile);
+        if(checkFile(clientPathFile)) {
+            doUploadJob(channel, clientPathFile);
+        }
     }
 
     @Override
@@ -106,5 +108,16 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         }
         log.info("finished!");
         channel.shutdown();
+    }
+
+    private boolean checkFile(File clientPathFile){
+        if (!clientPathFile.exists()) {
+            boolean createDir = clientPathFile.mkdir();
+            if (!createDir) {
+                log.error("create dir failed: {}", rpcProperties.getFileDir());
+            }
+            return false;
+        }
+        return true;
     }
 }
