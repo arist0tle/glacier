@@ -32,19 +32,19 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         log.info("start client");
         ManagedChannel channel = buildChannel(rpcProperties);
         File clientPathFile = new File(rpcProperties.getFileDir());
-        if(checkFile(clientPathFile)) {
+        if (checkFile(clientPathFile)) {
             doUploadJob(channel, clientPathFile);
         }
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         log.info("Shutting down gRPC server ...");
         log.info("gRPC server stopped.");
     }
 
     ///////////////////////////////////
-    private void doUploadJob(ManagedChannel channel, File clientPathFile){
+    private void doUploadJob(ManagedChannel channel, File clientPathFile) {
         long startPosition;
         int size;
         int len = rpcProperties.getBlockSize();
@@ -97,7 +97,7 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         channel.shutdown();
     }
 
-    private boolean checkFile(File clientPathFile){
+    private boolean checkFile(File clientPathFile) {
         if (!clientPathFile.exists()) {
             boolean createDir = clientPathFile.mkdir();
             if (!createDir) {
@@ -108,7 +108,7 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
         return true;
     }
 
-    private ManagedChannel buildChannel(RpcProperties rpcProperties){
+    private ManagedChannel buildChannel(RpcProperties rpcProperties) {
         String host = rpcProperties.getServerHost();
         int port = rpcProperties.getServerPort();
         log.info("Starting gRPC Server {}:{}", host, port);
