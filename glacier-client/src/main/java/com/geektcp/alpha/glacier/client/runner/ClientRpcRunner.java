@@ -38,13 +38,6 @@ public class ClientRpcRunner implements CommandLineRunner, DisposableBean {
                 .usePlaintext()
                 .build();
         File clientPathFile = new File(rpcProperties.getFileDir());
-        if (!clientPathFile.exists()) {
-            boolean createDir = clientPathFile.mkdir();
-            if (!createDir) {
-                log.error("create dir failed: {}", rpcProperties.getFileDir());
-            }
-        }
-
         if(checkFile(clientPathFile)) {
             doUploadJob(channel, clientPathFile);
         }
